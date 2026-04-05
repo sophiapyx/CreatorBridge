@@ -31,12 +31,8 @@ jobs:
           # Timezone configuration (Ensures scheduled posts align with Vancouver time)
           TZ: "America/Vancouver"
 
-          # Google Sheets Configuration
-          # Option A: Single JSON string (Recommended)
-          GSHEET_CREDENTIALS: ${{ secrets.GSHEET_CREDENTIALS }}
-          GSHEET_ID: ${{ secrets.GSHEET_ID }}
-
-          # Option B: Individual variables (If your code requires them separately)
+          # Google Sheets 
+          GOOGLE_SHEET_ID: ${{ secrets.GOOGLE_SHEET_ID }}
           GOOGLE_TYPE: ${{ secrets.GOOGLE_TYPE }}
           GOOGLE_PROJECT_ID: ${{ secrets.GOOGLE_PROJECT_ID }}
           GOOGLE_PRIVATE_KEY_ID: ${{ secrets.GOOGLE_PRIVATE_KEY_ID }}
