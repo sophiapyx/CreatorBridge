@@ -28,9 +28,26 @@ jobs:
 
       - name: Run CreatorBridge Orchestrator
         env:
+          # Timezone configuration (Ensures scheduled posts align with Vancouver time)
+          TZ: "America/Vancouver"
+
           # Google Sheets Configuration
+          # Option A: Single JSON string (Recommended)
           GSHEET_CREDENTIALS: ${{ secrets.GSHEET_CREDENTIALS }}
           GSHEET_ID: ${{ secrets.GSHEET_ID }}
+
+          # Option B: Individual variables (If your code requires them separately)
+          GOOGLE_TYPE: ${{ secrets.GOOGLE_TYPE }}
+          GOOGLE_PROJECT_ID: ${{ secrets.GOOGLE_PROJECT_ID }}
+          GOOGLE_PRIVATE_KEY_ID: ${{ secrets.GOOGLE_PRIVATE_KEY_ID }}
+          GOOGLE_PRIVATE_KEY: ${{ secrets.GOOGLE_PRIVATE_KEY }}
+          GOOGLE_CLIENT_EMAIL: ${{ secrets.GOOGLE_CLIENT_EMAIL }}
+          GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+          GOOGLE_AUTH_URI: ${{ secrets.GOOGLE_AUTH_URI }}
+          GOOGLE_TOKEN_URI: ${{ secrets.GOOGLE_TOKEN_URI }}
+          GOOGLE_AUTH_PROVIDER_X509_CERT_URL: ${{ secrets.GOOGLE_AUTH_PROVIDER_X509_CERT_URL }}
+          GOOGLE_CLIENT_X509_CERT_URL: ${{ secrets.GOOGLE_CLIENT_X509_CERT_URL }}
+          GOOGLE_UNIVERSE_DOMAIN: ${{ secrets.GOOGLE_UNIVERSE_DOMAIN }}
           
           # Facebook & Instagram
           FB_ACCESS_TOKEN: ${{ secrets.FB_ACCESS_TOKEN }}
