@@ -16,7 +16,7 @@ def check_password():
     if not st.session_state["password_correct"]:
         # Login interface configuration
         st.set_page_config(page_title="CreatorBridge Login", page_icon="🔐")
-        st.title("✦ CreatorBridge Protected Access")
+        st.title("✦ CreatorBridge")
         password = st.text_input("Enter Access Key:", type="password")
 
         # Password：Socialmedia
