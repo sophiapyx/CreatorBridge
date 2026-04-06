@@ -130,7 +130,7 @@ def main():
                         elif code == 'FB' and not str(info).startswith('http'):
                             formatted_link = f"https://www.facebook.com/{info}"
                         elif code == 'IG' and not str(info).startswith('http'):
-                            formatted_link = f"https://www.instagram.com/reels/videos/"
+                            formatted_link = f"https://www.instagram.com/sophiapeng39/"
                         
                         sheet_mgr.mark_posted(idx, code)
                         sheet_mgr.log_event(idx, link=f"{code}: {formatted_link}")
