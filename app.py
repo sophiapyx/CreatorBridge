@@ -7,9 +7,33 @@ except ImportError:
     ollama = None
 
 from utils.google_sheets import GoogleSheetsManager
+# --- SECURITY GATE ---
 
-# 1. Page Configuration & Theme
-st.set_page_config(page_title="CreatorBridge OS", layout="wide", page_icon="◇")
+def check_password():
+    """Only when the correct password is entered will the subsequent content be displayed"""
+    if "password_correct" not in st.session_state:
+        st.session_state["password_correct"] = False
+    if not st.session_state["password_correct"]:
+        # Login interface configuration
+        st.set_page_config(page_title="CreatorBridge Login", page_icon="🔐")
+        st.title("✦ CreatorBridge Protected Access")
+        password = st.text_input("Enter Access Key:", type="password")
+
+        # Password：Socialmedia
+        if password == "Socialmedia":
+            st.session_state["password_correct"] = True
+            st.rerun()
+        else:
+            if password: 
+                st.error("Invalid Key. Please contact Sophiayx321@gmail.com.")
+            st.stop()
+# Run the password check. If it fails, the execution will stop here.
+check_password()
+
+# ---------------------------------------------------
+
+# 1. Page Configuration & Professional Theme
+st.set_page_config(page_title="CreatorBridge OS", layout="wide", page_icon="✦")
 
 THEME_CONFIG = {
     "Draft": ["#1677FF", "#E6F4FF"],      
@@ -27,10 +51,11 @@ def get_status_cfg(status):
 # AI Content Generation Function
 def generate_content(source_text, platform):
     if ollama is None:
-        return "Error: 'ollama' library not installed."
+        return "Error: 'ollama' library not installed in venv."
+    
     prompt = f"Rewrite the following LinkedIn post for {platform}. Use appropriate emojis and formatting: {source_text}"
     try:
-        # Using 'llama3' alias as configured in your local Ollama
+        # Note: Ensure you have run 'ollama cp llama3.1 llama3' in terminal
         response = ollama.generate(model='llama3', prompt=prompt)
         return response['response']
     except Exception as e:
@@ -45,7 +70,6 @@ sheet_mgr = get_manager()
 def load_data():
     records = sheet_mgr.client.open_by_key(sheet_mgr.sheet_id).sheet1.get_all_records()
     df = pd.DataFrame(records)
-    # Cleaning whitespace from headers to ensure match
     df.columns = [c.strip() for c in df.columns]
     return df.map(lambda x: x.strip() if isinstance(x, str) else x)
 
@@ -53,7 +77,7 @@ def load_data():
 df = load_data()
 
 with st.sidebar:
-    st.markdown("## ◇ CreatorBridge")
+    st.markdown("## ✦ CreatorBridge")
     category = st.radio("Display Mode", list(THEME_CONFIG.keys()), index=1)
     st.markdown("---")
     if st.button("🔄 Refresh OS", use_container_width=True):
@@ -63,12 +87,19 @@ with st.sidebar:
 theme = get_status_cfg(category)
 st.markdown(f"""
     <style>
-    :root {{ --primary-color: {theme['color']}; }}
+    :root {{ 
+        --primary-color: {theme['color']}; 
+        --bg-hover: {theme['bg']};
+    }}
     .st-bc {{ border-color: var(--primary-color) !important; }}
-    .st-bd {{ color: var(--primary-color) !important; }}
+    .st-bd {{ border-color: var(--primary-color) !important; color: #31333F !important; }}
     button[data-baseweb="tab"][aria-selected="true"] {{ 
         color: var(--primary-color) !important; 
         border-bottom-color: var(--primary-color) !important; 
+    }}
+    textarea, input {{ 
+        color: #31333F !important; 
+        -webkit-text-fill-color: #31333F !important; 
     }}
     textarea:focus, input:focus {{ 
         border-color: var(--primary-color) !important; 
@@ -105,12 +136,9 @@ for index, row in display_df.iterrows():
             
             st.markdown("---")
 
-            # --- Fixed: Original Notes Link using 'original notes_url' ---
-            # This looks specifically for your column naming convention
-            notes_link = row.get('original notes_url')
-            
-            if notes_link and str(notes_link).startswith('http'):
-                st.link_button("📂 Open Original Notes", str(notes_link), use_container_width=True)
+            # --- Original Notes Link (Placed above image) ---
+            if row.get('original_notes_url'):
+                st.link_button("📂 Open Original Notes", row['original_notes_url'], use_container_width=True)
                 st.markdown("<div style='margin-bottom: 10px;'></div>", unsafe_allow_html=True)
 
             # Media Preview
@@ -139,7 +167,7 @@ for index, row in display_df.iterrows():
                             st.toast("Saved!")
                     
                     with r2:
-                        # AI Gen Visibility Logic
+                        # Only show AI Gen for Draft and Review status
                         if p_name != "LinkedIn" and current_status in ["draft", "review"]:
                             if st.button("🤖 AI Gen", key=f"ai_{c_col}_{row['id']}", use_container_width=True):
                                 with st.spinner("Processing..."):
