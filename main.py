@@ -36,7 +36,6 @@ def check_timing(scheduled_val):
     if val == "NOW":
         return True
     
-    # --- Require the use of the Vancouver time zone for comparison --- ---
     try:
         vancouver_tz = pytz.timezone('America/Vancouver')
         now_vancouver = datetime.now(vancouver_tz).replace(tzinfo=None)
@@ -77,7 +76,6 @@ def main():
                         final_fb = exist_fb if exist_fb else ai_results['fb']
                         final_md = exist_md if exist_md else ai_results['md']
                         sheet_mgr.update_ai_content(idx, final_ig, final_fb, final_md)
-                        # Set to review so user can check in UI
                         sheet_mgr.sheet.update_cell(idx, sheet_mgr.COL_STATUS, "review")
                     except Exception as e:
                         print(f" AI Error Row {idx}: {e}")
@@ -126,12 +124,20 @@ def main():
                     success, info = func(content, img_arg)
 
                     if success:
+                        formatted_link = info
+                        if code == 'LI' and not str(info).startswith('http'):
+                            formatted_link = f"https://www.linkedin.com/feed/update/{info}"
+                        elif code == 'FB' and not str(info).startswith('http'):
+                            formatted_link = f"https://www.facebook.com/{info}"
+                        elif code == 'IG' and not str(info).startswith('http'):
+                            formatted_link = f"https://www.instagram.com/reels/videos/"
+                        
                         sheet_mgr.mark_posted(idx, code)
-                        sheet_mgr.log_event(idx, link=f"{code}: {info}")
-                        print(f" {code}: Post Successful.")
+                        sheet_mgr.log_event(idx, link=f"{code}: {formatted_link}")
+                        print(f" {code}: Post Successful. URL: {formatted_link}")
                     else:
                         sheet_mgr.log_event(idx, error=f"{code} Fail: {info}")
-                        print(f" {code}: Post Failed.")
+                        print(f" {code}: Post Failed. Error Detail: {info}")
                         row_all_done = False
                 else:
                     row_all_done = False

@@ -9,7 +9,8 @@ on:
 
 jobs:
   automation-job:
-    runs-on: ubuntu-latest
+    # Updated to ubuntu-24.04 to ensure Node.js 20+ compatibility for 2026
+    runs-on: ubuntu-24.04
 
     steps:
       - name: Checkout Repository
