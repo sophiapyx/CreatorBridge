@@ -137,8 +137,8 @@ for index, row in display_df.iterrows():
             st.markdown("---")
 
             # --- Original Notes Link (Placed above image) ---
-            if row.get('original_notes_url'):
-                st.link_button("📂 Open Original Notes", row['original_notes_url'], use_container_width=True)
+            if row.get('original notes_url'):
+                st.link_button("📂 Open Original Notes", row['original notes_url'], use_container_width=True)
                 st.markdown("<div style='margin-bottom: 10px;'></div>", unsafe_allow_html=True)
 
             # Media Preview
